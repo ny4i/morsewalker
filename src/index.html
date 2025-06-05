@@ -161,6 +161,19 @@
             for="modePota"
             >POTA Activator</label
           >
+          <input
+            type="radio"
+            class="btn-check"
+            name="mode"
+            id="modeFieldDay"
+            value="fd"
+            autocomplete="off"
+          />
+          <label
+            class="btn btn-outline-primary d-flex align-items-center justify-content-center"
+            for="modeFieldDay"
+            >Field Day</label
+          >
 
           <input
             type="radio"
@@ -266,7 +279,6 @@
                   />
                   <div class="invalid-feedback"></div>
                 </div>
-
                 <div class="col-6 col-md-4 col-lg-2">
                   <label for="yourSpeed" class="form-label">Speed (WPM)</label>
                   <input
@@ -312,6 +324,38 @@
                     step="1"
                     required
                   />
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                  <label for="yourSection" class="form-label">Section</label>
+                  <input
+                    type="text"
+                    id="yourSection"
+                    name="section"
+                    class="form-control"
+                    maxlength="3"
+                    placeholder="(e.g., CA, TX, STX, LAX)"
+                    autocomplete="off"
+                    autocapitalize="characters"
+                    spellcheck="false"
+                    autocorrect="off"
+                  />
+                  <div class="invalid-feedback"></div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                  <label for="yourClass" class="form-label">Class (FD)</label>
+                  <input
+                    type="text"
+                    id="yourClass"
+                    name="klass"
+                    class="form-control"
+                    maxlength="4"
+                    placeholder="(e.g., 3A, 2B, 1BB)"
+                    autocomplete="off"
+                    autocapitalize="characters"
+                    spellcheck="false"
+                    autocorrect="off"
+                  />
+                  <div class="invalid-feedback"></div>
                 </div>
               </div>
             </div>

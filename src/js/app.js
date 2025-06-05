@@ -202,6 +202,8 @@ document.addEventListener('DOMContentLoaded', () => {
     yourCallsign: 'yourCallsign',
     yourName: 'yourName',
     yourState: 'yourState', // Added yourState
+    yourSection: 'yourSection',
+    yourClass: 'yourClass',
     yourSpeed: 'yourSpeed',
     yourSidetone: 'yourSidetone',
     yourVolume: 'yourVolume',
@@ -218,6 +220,9 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.getItem(keys.yourCallsign) || yourCallsign.value;
   yourName.value = localStorage.getItem(keys.yourName) || yourName.value;
   yourState.value = localStorage.getItem(keys.yourState) || yourState.value; // Load yourState
+  yourSection.value =
+    localStorage.getItem(keys.yourSection) || yourSection.value;
+  yourClass.value = localStorage.getItem(keys.yourClass) || yourClass.value;
   yourSpeed.value = localStorage.getItem(keys.yourSpeed) || yourSpeed.value;
   yourSidetone.value =
     localStorage.getItem(keys.yourSidetone) || yourSidetone.value;
@@ -233,6 +238,12 @@ document.addEventListener('DOMContentLoaded', () => {
   yourState.addEventListener('input', () => {
     // Save yourState
     localStorage.setItem(keys.yourState, yourState.value);
+  });
+  yourSection.addEventListener('input', () => {
+    localStorage.setItem(keys.yourSection, yourSection.value);
+  });
+  yourClass.addEventListener('input', () => {
+    localStorage.setItem(keys.yourClass, yourClass.value);
   });
   yourSpeed.addEventListener('input', () => {
     localStorage.setItem(keys.yourSpeed, yourSpeed.value);
