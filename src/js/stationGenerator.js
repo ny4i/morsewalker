@@ -28,6 +28,12 @@ const US_CALLSIGN_PREFIXES_WEIGHTED = [
   { value: 'AL', weight: 1 }, // 1%
 ];
 
+const CA_CALLSIGN_PREFIXES = [
+  'VE',
+  'VA',
+  'VO',
+  'VY',
+];
 const NON_US_CALLSIGN_PREFIXES = [
   '9A',
   'CT',
@@ -63,7 +69,10 @@ const NON_US_CALLSIGN_PREFIXES = [
   'SV',
   'UA',
   'UR',
+  'VA',
   'VE',
+  'VO',
+  'VY',
   'VK',
   'YO',
   'YT',
@@ -120,7 +129,7 @@ const stateAbbreviations = [
   'WI',
   'WY',
 ];
-const arrlSections = [
+const arrlSectionsUS = [
   'CO',
   'IA',
   'KS',
@@ -192,6 +201,8 @@ const arrlSections = [
   'IL',
   'IN',
   'WI',
+];
+const arrlSectionsCA = [
   'AB',
   'BC',
   'GH',
@@ -207,7 +218,16 @@ const arrlSections = [
   'SK',
   'TER',
 ];
-const fieldDayClasses = ['A', 'B', 'C', 'D', 'E', 'F'];
+const fieldDayClassesWeighted = [
+  { value: 'A', weight: 50 },
+  { value: 'AB', weight: 5 },
+  { value: 'B', weight: 5 },
+  { value: 'BB', weight: 5 },
+  { value: 'C', weight: 5 },
+  { value: 'D', weight: 10 },
+  { value: 'E', weight: 10 },
+  { value: 'F', weight: 5 },
+];
 const names = [
   'Adam',
   'Ahmed',
@@ -345,7 +365,7 @@ export function getYourStation() {
  *
  * @returns {Object|null} The calling station configuration or null if inputs are unavailable.
  */
-export function getCallingStation() {
+export function getCallingStation(currentMode) {
   let inputs = getInputs();
   if (inputs === null) return;
 
@@ -355,7 +375,9 @@ export function getCallingStation() {
   return {
     callsign: isUS
       ? getRandomUSCallsign(inputs.formats)
-      : getRandomNonUSCallsign(inputs.formats),
+      : currentMode === 'fd'
+        ? getRandomCACallsign(inputs.formats)
+        : getRandomNonUSCallsign(inputs.formats),
     wpm:
       Math.floor(Math.random() * (inputs.maxSpeed - inputs.minSpeed + 1)) +
       inputs.minSpeed,
@@ -368,10 +390,12 @@ export function getCallingStation() {
     ),
     name: randomElement(names),
     state: isUS ? randomElement(stateAbbreviations) : '',
-    section: randomElement(arrlSections), // would be nice to pick from a map of state to random section in that state but would miss canada and we use only one or the other anyway
+    section: isUS
+      ? randomElement(arrlSectionsUS)
+      : randomElement(arrlSectionsCA),
     klass:
-      (Math.floor(Math.random() * 20) + 1).toString() +
-      randomElement(fieldDayClasses),
+      (Math.floor(Math.pow(Math.random(), 2) * 20) + 1).toString() +
+      weightedRandomElement(fieldDayClassesWeighted),
     serialNumber: (Math.floor(Math.random() * 30) + 1)
       .toString()
       .padStart(2, '0'),
@@ -431,6 +455,30 @@ function getRandomUSCallsign(formats) {
   }
 }
 
+/**
+ * Generates a random CA amateur radio callsign.
+ *
+ * Combines a random Candian prefix with a digit and a sequence of letters
+ * according to the specified format. Ensures compatibility between prefix length
+ * and format requirements. Retries until a valid combination is found for prefixes
+ * and formats. Leverages predefined Canadian prefixes.
+ *
+ * @param {string[]} formats - An array of valid callsign formats.
+ * @returns {string} A randomly generated CA callsign.
+ */
+function getRandomCACallsign(formats) {
+  let prefix, format;
+  do {
+    prefix = randomElement(CA_CALLSIGN_PREFIXES);
+    format = randomElement(formats);
+  } while (format.startsWith('1x') && prefix.length !== 1);
+
+  const number = randomDigit();
+  const lettersBeforeNumber = format.startsWith('2x') ? 2 - prefix.length : 0;
+  const lettersAfterNumber = parseInt(format.slice(-1));
+
+  return `${prefix}${generateRandomLetters(lettersBeforeNumber)}${number}${generateRandomLetters(lettersAfterNumber)}`;
+}
 /**
  * Generates a random non-US amateur radio callsign.
  *

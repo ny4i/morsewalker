@@ -1,6 +1,7 @@
 import { createMorsePlayer, updateAudioLock } from './audio.js';
 import { getCallingStation } from './stationGenerator.js';
 import { getInputs } from './inputs.js';
+import { getCurrentMode } from './app.js';
 
 /**
  * Compares the source and query strings based on specific fuzzy match criteria.
@@ -463,7 +464,7 @@ export function addStations(stations, inputs) {
     let numStations = weightedRandom(inputs.maxStations - stations.length);
     console.log(`+ Adding ${numStations} stations...`);
     for (let i = 0; i < numStations; i++) {
-      let callingStation = getCallingStation();
+      let callingStation = getCallingStation(getCurrentMode());
       printStation(callingStation);
       stations.push(callingStation);
     }

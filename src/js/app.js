@@ -305,6 +305,17 @@ function getModeConfig() {
 }
 
 /**
+ * Retrieves the current mode
+ *
+ * Returns the string value of the current mode
+ *
+ * @returns {string} currnet mode.
+ */
+export function getCurrentMode() {
+  return currentMode;
+}
+
+/**
  * Updates the UI to reflect the current mode's configuration.
  *
  * Adjusts visibility, placeholders, and content of various UI elements like the
@@ -923,7 +934,7 @@ function nextSingleStation(responseStartTime) {
   const responseField = document.getElementById('responseField');
   const cqButton = document.getElementById('cqButton');
 
-  let callingStation = getCallingStation();
+  let callingStation = getCallingStation(currentMode);
   printStation(callingStation);
   currentStation = callingStation;
   currentStationAttempts = 0;
