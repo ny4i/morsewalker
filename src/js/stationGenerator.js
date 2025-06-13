@@ -219,10 +219,8 @@ const arrlSectionsCA = [
   'TER',
 ];
 const fieldDayClassesWeighted = [
-  { value: 'A', weight: 50 },
-  { value: 'AB', weight: 5 },
-  { value: 'B', weight: 5 },
-  { value: 'BB', weight: 5 },
+  { value: 'A', weight: 60 },
+  { value: 'B', weight: 10 },
   { value: 'C', weight: 5 },
   { value: 'D', weight: 10 },
   { value: 'E', weight: 10 },
