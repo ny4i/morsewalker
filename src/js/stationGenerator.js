@@ -146,7 +146,7 @@ const arrlSectionsUS = [
   'VT',
   'WMA',
   'ENY',
-  'NLJ',
+  'NLI',
   'NNJ',
   'NNY',
   'SNJ',
