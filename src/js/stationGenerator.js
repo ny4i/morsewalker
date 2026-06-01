@@ -28,6 +28,12 @@ const US_CALLSIGN_PREFIXES_WEIGHTED = [
   { value: 'AL', weight: 1 }, // 1%
 ];
 
+const CA_CALLSIGN_PREFIXES = [
+  'VE',
+  'VA',
+  'VO',
+  'VY',
+];
 const NON_US_CALLSIGN_PREFIXES = [
   '9A',
   'CT',
@@ -63,7 +69,10 @@ const NON_US_CALLSIGN_PREFIXES = [
   'SV',
   'UA',
   'UR',
+  'VA',
   'VE',
+  'VO',
+  'VY',
   'VK',
   'YO',
   'YT',
@@ -119,6 +128,103 @@ const stateAbbreviations = [
   'WV',
   'WI',
   'WY',
+];
+const arrlSectionsUS = [
+  'CO',
+  'IA',
+  'KS',
+  'MN',
+  'MO',
+  'ND',
+  'NE',
+  'SD',
+  'CT',
+  'EMA',
+  'ME',
+  'NH',
+  'RI',
+  'VT',
+  'WMA',
+  'ENY',
+  'NLI',
+  'NNJ',
+  'NNY',
+  'SNJ',
+  'WNY',
+  'DE',
+  'EPA',
+  'MDC',
+  'WPA',
+  'AL',
+  'GA',
+  'KY',
+  'NC',
+  'NFL',
+  'PR',
+  'SC',
+  'SFL',
+  'TN',
+  'VA',
+  'VI',
+  'WCF',
+  'AR',
+  'LA',
+  'MS',
+  'NM',
+  'NTX',
+  'OK',
+  'STX',
+  'WTX',
+  'EB',
+  'LAX',
+  'ORG',
+  'PAC',
+  'SB',
+  'SCV',
+  'SDG',
+  'SF',
+  'SJV',
+  'SV',
+  'AK',
+  'AZ',
+  'EWA',
+  'ID',
+  'MT',
+  'NV',
+  'OR',
+  'UT',
+  'WWA',
+  'WY',
+  'MI',
+  'OH',
+  'WV',
+  'IL',
+  'IN',
+  'WI',
+];
+const arrlSectionsCA = [
+  'AB',
+  'BC',
+  'GH',
+  'MB',
+  'NB',
+  'NL',
+  'NS',
+  'ONE',
+  'ONN',
+  'ONS',
+  'PE',
+  'QC',
+  'SK',
+  'TER',
+];
+const fieldDayClassesWeighted = [
+  { value: 'A', weight: 60 },
+  { value: 'B', weight: 10 },
+  { value: 'C', weight: 5 },
+  { value: 'D', weight: 10 },
+  { value: 'E', weight: 10 },
+  { value: 'F', weight: 5 },
 ];
 const names = [
   'Adam',
@@ -217,6 +323,21 @@ const names = [
   'William',
   'Yan',
 ];
+const AckWeighted = [
+  { value: '', weight: 10 },
+  { value: 'R ', weight: 60 },
+  { value: 'RR ', weight: 15 },
+  { value: 'QSL ', weight: 10 },
+  { value: 'X ', weight: 5 },
+];
+const ThanksWeighted = [
+  { value: '', weight: 10 },
+  { value: ' TU', weight: 50 },
+  { value: ' TNX', weight: 5 },
+  { value: ' GL', weight: 20 },
+  { value: ' 73', weight: 10 },
+  { value: ' 72', weight: 5 },
+];
 
 /**
  * Retrieves the current user's station configuration.
@@ -239,6 +360,8 @@ export function getYourStation() {
     frequency: inputs.yourSidetone,
     name: inputs.yourName,
     state: inputs.yourState,
+    section: inputs.yourSection,
+    klass: inputs.yourClass,
     player: null,
     qsb: false,
   };
@@ -255,17 +378,26 @@ export function getYourStation() {
  *
  * @returns {Object|null} The calling station configuration or null if inputs are unavailable.
  */
-export function getCallingStation() {
+export function getCallingStation(currentMode) {
   let inputs = getInputs();
   if (inputs === null) return;
 
   // determine if it's a US station
-  let isUS = inputs.usOnly ? true : Math.random() < 0.4;
+  let isUS = inputs.usOnly
+    ? true
+    : currentMode === 'fd'
+      ? Math.random() < 0.8 // Field Day is very US-weighted
+      : Math.random() < 0.4;
+  let isCA = !isUS && Math.random() < 0.3; // used only for FD; CA more likely than DX during field day
+  let callsign = isUS
+    ? getRandomUSCallsign(inputs.formats)
+    : currentMode === 'fd' && isCA
+      ? getRandomCACallsign(inputs.formats)
+      : getRandomNonUSCallsign(inputs.formats)
+  isCA = prefixIn(callsign, CA_CALLSIGN_PREFIXES); // getRandomNonUSCallsign may have found CA
 
   return {
-    callsign: isUS
-      ? getRandomUSCallsign(inputs.formats)
-      : getRandomNonUSCallsign(inputs.formats),
+    callsign: callsign,
     wpm:
       Math.floor(Math.random() * (inputs.maxSpeed - inputs.minSpeed + 1)) +
       inputs.minSpeed,
@@ -278,6 +410,16 @@ export function getCallingStation() {
     ),
     name: randomElement(names),
     state: isUS ? randomElement(stateAbbreviations) : '',
+    section: isUS
+      ? randomElement(arrlSectionsUS)
+      : isCA
+        ? randomElement(arrlSectionsCA)
+        : 'DX',
+    acknowledgement: weightedRandomElement(AckWeighted),
+    thanks: weightedRandomElement(ThanksWeighted),
+    klass:
+      (Math.floor(Math.pow(Math.random(), 2) * 20) + 1).toString() +
+      weightedRandomElement(fieldDayClassesWeighted),
     serialNumber: (Math.floor(Math.random() * 30) + 1)
       .toString()
       .padStart(2, '0'),
@@ -289,6 +431,22 @@ export function getCallingStation() {
     // QSB depth range: 0.6 to 1.0
     qsbDepth: Math.random() * 0.4 + 0.6,
   };
+}
+
+/**
+ * Checks whether a callsign starts with any of the prefixes in the list
+ *
+ * @param {string} callsign
+ * @param {string[]} prefixes
+ * @returns {boolean} True if callsign starts with any of the prefixes, false otherwise.
+ */
+function prefixIn(callsign, prefixList) {
+  for (let i = 0; i < prefixList.length; i++) {
+    if (callsign.startsWith(prefixList[i])) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -337,6 +495,30 @@ function getRandomUSCallsign(formats) {
   }
 }
 
+/**
+ * Generates a random CA amateur radio callsign.
+ *
+ * Combines a random Candian prefix with a digit and a sequence of letters
+ * according to the specified format. Ensures compatibility between prefix length
+ * and format requirements. Retries until a valid combination is found for prefixes
+ * and formats. Leverages predefined Canadian prefixes.
+ *
+ * @param {string[]} formats - An array of valid callsign formats.
+ * @returns {string} A randomly generated CA callsign.
+ */
+function getRandomCACallsign(formats) {
+  let prefix, format;
+  do {
+    prefix = randomElement(CA_CALLSIGN_PREFIXES);
+    format = randomElement(formats);
+  } while (format.startsWith('1x') && prefix.length !== 1);
+
+  const number = randomDigit();
+  const lettersBeforeNumber = format.startsWith('2x') ? 2 - prefix.length : 0;
+  const lettersAfterNumber = parseInt(format.slice(-1));
+
+  return `${prefix}${generateRandomLetters(lettersBeforeNumber)}${number}${generateRandomLetters(lettersAfterNumber)}`;
+}
 /**
  * Generates a random non-US amateur radio callsign.
  *
