@@ -34,6 +34,15 @@ export const modeUIConfig = {
     extraColumnHeader: 'State',
     resultsHeader: 'POTA Mode Results',
   },
+  fd: {
+    showTuButton: true,
+    showInfoField: true,
+    infoFieldPlaceholder: 'Class',
+    showInfoField2: true,
+    infoField2Placeholder: 'Section',
+    tableExtraColumn: true,
+    extraColumnHeader: 'Exchange',
+  },
   sst: {
     showTuButton: true,
     showInfoField: true,
@@ -97,6 +106,23 @@ export const modeLogicConfig = {
     modeName: 'POTA',
     extraInfoFieldKey: 'state',
     extraInfoFieldKey2: null,
+  },
+  fd: {
+    cqMessage: (yourStation, theirStation, arbitrary) =>
+      `CQ FD ${yourStation.callsign}`,
+    yourExchange: (yourStation, theirStation, arbitrary) =>
+      `${yourStation.klass} ${yourStation.section}`,
+    theirExchange: (yourStation, theirStation, arbitrary) =>
+      `${theirStation.acknowledgement}${theirStation.klass} ${theirStation.section}${theirStation.thanks}`,
+    yourSignoff: (yourStation, theirStation, arbitrary) =>
+      `TU ${yourStation.callsign}`,
+    theirSignoff: null,
+    requiresInfoField: true,
+    requiresInfoField2: true,
+    showTuStep: true,
+    modeName: 'Field Day',
+    extraInfoFieldKey: 'klass',
+    extraInfoFieldKey2: 'section',
   },
   contest: {
     cqMessage: (yourStation, theirStation, arbitrary) =>

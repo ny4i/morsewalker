@@ -20,6 +20,7 @@ improve their pileup handling skills, and enhance their overall proficiency in C
 - POTA Activator - exchange callsign and state in a POTA-style format.
 - CW Ops Test (CWT) - exchange callsign, name and CW Ops number in the CWT QSO format.
 - K1USN SST - exchange callsign, name, and state in the SST QSO format.
+- Field Day - exchange callsign, class, and ARRL section in an ARRL Field Day format.
 
 ### How to "Cheat"
 

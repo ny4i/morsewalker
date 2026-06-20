@@ -161,6 +161,19 @@
             for="modePota"
             >POTA Activator</label
           >
+          <input
+            type="radio"
+            class="btn-check"
+            name="mode"
+            id="modeFieldDay"
+            value="fd"
+            autocomplete="off"
+          />
+          <label
+            class="btn btn-outline-primary d-flex align-items-center justify-content-center"
+            for="modeFieldDay"
+            >Field Day</label
+          >
 
           <input
             type="radio"
@@ -266,7 +279,6 @@
                   />
                   <div class="invalid-feedback"></div>
                 </div>
-
                 <div class="col-6 col-md-4 col-lg-2">
                   <label for="yourSpeed" class="form-label">Speed (WPM)</label>
                   <input
@@ -312,6 +324,38 @@
                     step="1"
                     required
                   />
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                  <label for="yourSection" class="form-label">Section</label>
+                  <input
+                    type="text"
+                    id="yourSection"
+                    name="section"
+                    class="form-control"
+                    maxlength="3"
+                    placeholder="(e.g., CA, TX, STX, LAX)"
+                    autocomplete="off"
+                    autocapitalize="characters"
+                    spellcheck="false"
+                    autocorrect="off"
+                  />
+                  <div class="invalid-feedback"></div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                  <label for="yourClass" class="form-label">Class (FD)</label>
+                  <input
+                    type="text"
+                    id="yourClass"
+                    name="klass"
+                    class="form-control"
+                    maxlength="4"
+                    placeholder="(e.g., 3A, 2B, 1BB)"
+                    autocomplete="off"
+                    autocapitalize="characters"
+                    spellcheck="false"
+                    autocorrect="off"
+                  />
+                  <div class="invalid-feedback"></div>
                 </div>
               </div>
             </div>
@@ -620,6 +664,68 @@
                     />
                     <label class="btn btn-outline-primary" for="2x3">2x3</label>
                   </div>
+                </div>
+              </div>
+
+              <!-- Field Day Real Calls Row -->
+              <div class="row g-3 mt-3 align-items-end">
+                <!-- Use Real 2025 Field Day Calls -->
+                <div class="col-12 col-md-4">
+                  <label class="form-label"
+                    ><span class="badge bg-success me-2">NEW!</span></label
+                  >
+                  <input
+                    type="checkbox"
+                    class="btn-check"
+                    autocomplete="off"
+                    id="useRealFieldDayCalls"
+                    onchange="
+                   document.getElementById('useRealFieldDayCallsLabel').innerHTML =
+                     `<i class='${this.checked ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle-xmark'} me-2'></i>Use 2025 FD Calls`;
+                 "
+                  />
+                  <label
+                    class="btn btn-outline-primary w-100"
+                    for="useRealFieldDayCalls"
+                    id="useRealFieldDayCallsLabel"
+                  >
+                    <i class="fa-regular fa-circle-xmark me-2"></i>Use 2025 FD
+                    Calls
+                  </label>
+                </div>
+
+                <!-- CW-Active Stations Only (only meaningful with real calls) -->
+                <div class="col-12 col-md-4">
+                  <label class="form-label">&nbsp;</label>
+                  <input
+                    type="checkbox"
+                    class="btn-check"
+                    autocomplete="off"
+                    id="cwActiveFieldDayOnly"
+                    disabled
+                    onchange="
+                   document.getElementById('cwActiveFieldDayOnlyLabel').innerHTML =
+                     `<i class='${this.checked ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle-xmark'} me-2'></i>CW-Active Only`;
+                 "
+                  />
+                  <label
+                    class="btn btn-outline-primary w-100"
+                    for="cwActiveFieldDayOnly"
+                    id="cwActiveFieldDayOnlyLabel"
+                  >
+                    <i class="fa-regular fa-circle-xmark me-2"></i>CW-Active
+                    Only
+                  </label>
+                </div>
+
+                <!-- Explanatory text -->
+                <div class="col-12 col-md-4">
+                  <p class="form-text mt-0 mb-0">
+                    In Field Day mode, use real callsigns, classes, and sections
+                    from the 2025 ARRL results instead of random ones.
+                    <em>CW-Active Only</em> limits callers to stations that
+                    logged CW QSOs. Other modes are unaffected.
+                  </p>
                 </div>
               </div>
 
@@ -1089,7 +1195,7 @@
                           >Use partial matches to single out stations</strong
                         >
                         in a pileup. E.g., for W6NYC, all of the following will
-                        get a reply back: 'W?', 'W6?', 'W6NC', 'NYC'.<br /><br /><i
+                        get a reply back: 'W?', 'W6?', 'W6NC', 'NYC', '6?'.<br /><br /><i
                           >Note that more than one station may reply if they
                           match your partial pattern!</i
                         >
