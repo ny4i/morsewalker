@@ -1,4 +1,5 @@
 import { getInputs } from './inputs.js';
+import { getRandomRealFieldDayStation } from './fieldDayStations.js';
 
 // Weighting these callsign prefixes has been a journey...
 // Originally, I weighted them based on rough analysis found here:
@@ -28,12 +29,7 @@ const US_CALLSIGN_PREFIXES_WEIGHTED = [
   { value: 'AL', weight: 1 }, // 1%
 ];
 
-const CA_CALLSIGN_PREFIXES = [
-  'VE',
-  'VA',
-  'VO',
-  'VY',
-];
+const CA_CALLSIGN_PREFIXES = ['VE', 'VA', 'VO', 'VY'];
 const NON_US_CALLSIGN_PREFIXES = [
   '9A',
   'CT',
@@ -393,10 +389,10 @@ export function getCallingStation(currentMode) {
     ? getRandomUSCallsign(inputs.formats)
     : currentMode === 'fd' && isCA
       ? getRandomCACallsign(inputs.formats)
-      : getRandomNonUSCallsign(inputs.formats)
+      : getRandomNonUSCallsign(inputs.formats);
   isCA = prefixIn(callsign, CA_CALLSIGN_PREFIXES); // getRandomNonUSCallsign may have found CA
 
-  return {
+  const station = {
     callsign: callsign,
     wpm:
       Math.floor(Math.random() * (inputs.maxSpeed - inputs.minSpeed + 1)) +
@@ -431,6 +427,26 @@ export function getCallingStation(currentMode) {
     // QSB depth range: 0.6 to 1.0
     qsbDepth: Math.random() * 0.4 + 0.6,
   };
+
+  // For Field Day, optionally replace the randomly generated identity with a
+  // real station drawn from the 2025 results. Only the callsign, class, and
+  // section come from the dataset; all other attributes (name, speed, volume,
+  // tone, acknowledgement/thanks prosigns, QSB) remain randomized as above.
+  // The operator's own callsign is excluded so they never work themselves.
+  if (currentMode === 'fd' && inputs.useRealFieldDayCalls) {
+    const realStation = getRandomRealFieldDayStation(
+      inputs.yourCallsign,
+      inputs.cwActiveFieldDayOnly,
+      inputs.formats
+    );
+    if (realStation) {
+      station.callsign = realStation.callsign;
+      station.klass = realStation.klass;
+      station.section = realStation.section;
+    }
+  }
+
+  return station;
 }
 
 /**

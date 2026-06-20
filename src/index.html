@@ -667,6 +667,68 @@
                 </div>
               </div>
 
+              <!-- Field Day Real Calls Row -->
+              <div class="row g-3 mt-3 align-items-end">
+                <!-- Use Real 2025 Field Day Calls -->
+                <div class="col-12 col-md-4">
+                  <label class="form-label"
+                    ><span class="badge bg-success me-2">NEW!</span></label
+                  >
+                  <input
+                    type="checkbox"
+                    class="btn-check"
+                    autocomplete="off"
+                    id="useRealFieldDayCalls"
+                    onchange="
+                   document.getElementById('useRealFieldDayCallsLabel').innerHTML =
+                     `<i class='${this.checked ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle-xmark'} me-2'></i>Use 2025 FD Calls`;
+                 "
+                  />
+                  <label
+                    class="btn btn-outline-primary w-100"
+                    for="useRealFieldDayCalls"
+                    id="useRealFieldDayCallsLabel"
+                  >
+                    <i class="fa-regular fa-circle-xmark me-2"></i>Use 2025 FD
+                    Calls
+                  </label>
+                </div>
+
+                <!-- CW-Active Stations Only (only meaningful with real calls) -->
+                <div class="col-12 col-md-4">
+                  <label class="form-label">&nbsp;</label>
+                  <input
+                    type="checkbox"
+                    class="btn-check"
+                    autocomplete="off"
+                    id="cwActiveFieldDayOnly"
+                    disabled
+                    onchange="
+                   document.getElementById('cwActiveFieldDayOnlyLabel').innerHTML =
+                     `<i class='${this.checked ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle-xmark'} me-2'></i>CW-Active Only`;
+                 "
+                  />
+                  <label
+                    class="btn btn-outline-primary w-100"
+                    for="cwActiveFieldDayOnly"
+                    id="cwActiveFieldDayOnlyLabel"
+                  >
+                    <i class="fa-regular fa-circle-xmark me-2"></i>CW-Active
+                    Only
+                  </label>
+                </div>
+
+                <!-- Explanatory text -->
+                <div class="col-12 col-md-4">
+                  <p class="form-text mt-0 mb-0">
+                    In Field Day mode, use real callsigns, classes, and sections
+                    from the 2025 ARRL results instead of random ones.
+                    <em>CW-Active Only</em> limits callers to stations that
+                    logged CW QSOs. Other modes are unaffected.
+                  </p>
+                </div>
+              </div>
+
               <!-- Cut Numbers Row -->
               <div class="row g-3 mt-3 align-items-end">
                 <!-- Enable Cut Numbers -->

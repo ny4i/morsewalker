@@ -60,6 +60,14 @@ function getDOMInputs() {
     usOnly: document.getElementById('usOnly')
       ? document.getElementById('usOnly').checked
       : false,
+    // Field Day: use real 2025 callsigns/exchanges instead of random generation
+    useRealFieldDayCalls: document.getElementById('useRealFieldDayCalls')
+      ? document.getElementById('useRealFieldDayCalls').checked
+      : false,
+    // Field Day: when using real calls, restrict to stations that ran CW in 2025
+    cwActiveFieldDayOnly: document.getElementById('cwActiveFieldDayOnly')
+      ? document.getElementById('cwActiveFieldDayOnly').checked
+      : false,
     qrn: document.querySelector('input[name="qrn"]:checked').value,
     qsb: document.getElementById('qsb').checked,
     qsbPercentage: parseInt(document.getElementById('qsbPercentage').value, 10),

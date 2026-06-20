@@ -143,6 +143,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Field Day real-calls elements
+  // The "CW-Active Only" filter only applies when real 2025 calls are in use,
+  // so it is enabled/disabled in lockstep with the "Use 2025 FD Calls" toggle.
+  const useRealFieldDayCallsCheckbox = document.getElementById(
+    'useRealFieldDayCalls'
+  );
+  const cwActiveFieldDayOnlyCheckbox = document.getElementById(
+    'cwActiveFieldDayOnly'
+  );
+  cwActiveFieldDayOnlyCheckbox.disabled = !useRealFieldDayCallsCheckbox.checked;
+  useRealFieldDayCallsCheckbox.addEventListener('change', () => {
+    cwActiveFieldDayOnlyCheckbox.disabled =
+      !useRealFieldDayCallsCheckbox.checked;
+  });
+
   function updateResponsiveButtons() {
     const responsiveButtons = document.querySelectorAll('.btn-responsive');
     responsiveButtons.forEach((button) => {
