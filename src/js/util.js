@@ -1,6 +1,7 @@
 import { createMorsePlayer, updateAudioLock } from './audio.js';
 import { getCallingStation } from './stationGenerator.js';
 import { getInputs } from './inputs.js';
+import { getCurrentMode } from './app.js';
 
 /**
  * Compares the source and query strings based on specific fuzzy match criteria.
@@ -38,6 +39,11 @@ export function compareStrings(source, query) {
   // Check Criterion 5 (Partial Match with Two Initial Characters Matching and One Off-by-One)
   if (criterion5(source, query)) {
     // console.log("Partial: Criterion 5");
+    return 'partial';
+  }
+  // Check Criterion 6 (Single Number Matches Call Region)
+  if (criterion6(source, query)) {
+    // console.log("Partial: Criterion 6");
     return 'partial';
   }
   // If none of the criteria are met
@@ -223,6 +229,47 @@ export function compareStrings(source, query) {
     }
 
     return true;
+  }
+
+  /**
+   * Criterion 6: Single Number Matches Call Region
+   *
+   * - **Conditions:**
+   *   - The query must be a single digit character
+   *   - The callsign must have only a single number
+   *   - They must match
+   *
+   * - **Examples:**
+   *   - Source: "AB6ZZ", Query: "6"
+   *   => "AB6ZZ" contains one number, "6".
+   *   => "6" is a single digit
+   *   => "6" matches "6"
+   *
+   * @param {string} source
+   * @param {string} query
+   * @returns boolean
+   */
+  function criterion6(source, query) {
+    // The query must be a single digit character
+    if (!isdigit(query)) {
+      return false;
+    }
+
+    // The source must contain exactly one digit
+    let digits = 0;
+    let source_digit;
+    for (const ch of source) {
+      if (isdigit(ch)) {
+        digits++;
+        source_digit = ch;
+      }
+    }
+    if (digits != 1) {
+      return false;
+    }
+
+    // They must match
+    return source_digit === query;
   }
 }
 
@@ -463,7 +510,7 @@ export function addStations(stations, inputs) {
     let numStations = weightedRandom(inputs.maxStations - stations.length);
     console.log(`+ Adding ${numStations} stations...`);
     for (let i = 0; i < numStations; i++) {
-      let callingStation = getCallingStation();
+      let callingStation = getCallingStation(getCurrentMode());
       printStation(callingStation);
       stations.push(callingStation);
     }
@@ -649,4 +696,17 @@ function updateSummaryRow(tableName, extra = null) {
  */
 export function updateActiveStations(numStations) {
   document.getElementById('activeStations').textContent = numStations;
+}
+
+/**
+ * Checks if provided string is a single digit character
+ *
+ * @param {string} ch - The prospective digit
+ * @returns {boolean}
+ */
+export function isdigit(ch) {
+  if (ch.length !== 1) {
+    return false;
+  }
+  return '1234567890'.includes(ch);
 }

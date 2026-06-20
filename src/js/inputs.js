@@ -36,6 +36,11 @@ function getDOMInputs() {
       .toUpperCase(),
     yourName: document.getElementById('yourName').value.trim(),
     yourState: document.getElementById('yourState').value.trim().toUpperCase(), // Convert to uppercase for consistency
+    yourSection: document
+      .getElementById('yourSection')
+      .value.trim()
+      .toUpperCase(),
+    yourClass: document.getElementById('yourClass').value.trim().toUpperCase(),
     yourSpeed: parseInt(document.getElementById('yourSpeed').value, 10),
     yourSidetone: parseInt(document.getElementById('yourSidetone').value, 10),
     // convert volume to a float between 0 and 1
@@ -54,6 +59,14 @@ function getDOMInputs() {
     // Checkboxes & Radio
     usOnly: document.getElementById('usOnly')
       ? document.getElementById('usOnly').checked
+      : false,
+    // Field Day: use real 2025 callsigns/exchanges instead of random generation
+    useRealFieldDayCalls: document.getElementById('useRealFieldDayCalls')
+      ? document.getElementById('useRealFieldDayCalls').checked
+      : false,
+    // Field Day: when using real calls, restrict to stations that ran CW in 2025
+    cwActiveFieldDayOnly: document.getElementById('cwActiveFieldDayOnly')
+      ? document.getElementById('cwActiveFieldDayOnly').checked
       : false,
     qrn: document.querySelector('input[name="qrn"]:checked').value,
     qsb: document.getElementById('qsb').checked,
@@ -112,6 +125,19 @@ function validateInputs(inputs) {
   }
   if (!inputs.yourState && inputs.mode === 'sst') {
     markFieldInvalid('yourState', 'Your state is required for SST mode.');
+    openAccordionSection('collapseYourStationSettings');
+    isValid = false;
+  }
+  if (!inputs.yourSection && inputs.mode === 'fd') {
+    markFieldInvalid(
+      'yourSection',
+      'Your section is required for Field Day mode.'
+    );
+    openAccordionSection('collapseYourStationSettings');
+    isValid = false;
+  }
+  if (!inputs.yourClass && inputs.mode === 'fd') {
+    markFieldInvalid('yourClass', 'Your class is required for Field Day mode.');
     openAccordionSection('collapseYourStationSettings');
     isValid = false;
   }

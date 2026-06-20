@@ -27,6 +27,10 @@ module.exports = {
           filename: 'audio/[name][ext]', // Output to 'dist/audio' directory
         },
       },
+      {
+        test: /\.csv$/, // Bundle CSV data files as raw strings
+        type: 'asset/source', // Import the file contents directly as a string
+      },
     ],
   },
   plugins: [
