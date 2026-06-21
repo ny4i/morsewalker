@@ -437,12 +437,17 @@ export function getCallingStation(currentMode) {
     const realStation = getRandomRealFieldDayStation(
       inputs.yourCallsign,
       inputs.cwActiveFieldDayOnly,
-      inputs.formats
+      inputs.formats,
+      inputs.usOnly
     );
     if (realStation) {
       station.callsign = realStation.callsign;
       station.klass = realStation.klass;
       station.section = realStation.section;
+      // The dataset has no state; clear the randomly-generated one so the
+      // console doesn't show a state/section mismatch (FD sends section, not
+      // state, so this field is unused here anyway).
+      station.state = '';
     }
   }
 

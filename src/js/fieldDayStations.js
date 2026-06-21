@@ -139,6 +139,22 @@ const realStations = rawData
 const cwActiveStations = realStations.filter((station) => station.cwQsos > 0);
 
 /**
+ * Tests whether a callsign belongs to the United States.
+ *
+ * US amateur callsigns (including territories such as Hawaii KH6, Alaska KL7,
+ * and Puerto Rico KP4) begin with K, N, W, or a letter in the A block (AA-AL).
+ * This mirrors the prefix set the random generator treats as US, so the
+ * "Only US calls" setting behaves identically whether stations are randomly
+ * generated or drawn from the real Field Day results.
+ *
+ * @param {string} callsign - The base callsign (already uppercased).
+ * @returns {boolean} True if the callsign is a US callsign.
+ */
+function isUSCallsign(callsign) {
+  return /^[KNWA]/.test(callsign);
+}
+
+/**
  * Selects a random real Field Day station from the 2025 results dataset.
  *
  * Optionally restricts the pool to stations that actually made CW contacts, and
@@ -151,22 +167,30 @@ const cwActiveStations = realStations.filter((station) => station.cwQsos > 0);
  * Honors the "Callsign Format Options" selection: when a non-empty list of
  * formats is supplied, only stations whose callsign matches one of those
  * formats are eligible (mirroring how the random generator restricts formats).
- * If that leaves no candidates, the function returns null so the caller can
- * fall back to random generation (which also respects the format selection).
+ * Also honors the "Only US calls" setting: when `usOnly` is true, non-US
+ * stations (the dataset includes Canadian, Mexican, and DX entries) are
+ * excluded. If either filter leaves no candidates, the function returns null so
+ * the caller can fall back to random generation (which also respects these
+ * selections).
  *
  * @param {string|null} [excludeCallsign=null] - A callsign to skip (case-insensitive).
  * @param {boolean} [cwActiveOnly=false] - Restrict to CW-active stations.
  * @param {string[]|null} [formats=null] - Allowed callsign formats (e.g. ['1x2','2x3']).
+ * @param {boolean} [usOnly=false] - Restrict to US callsigns.
  * @returns {FieldDayStation|null} A random station, or null if the pool is empty.
  */
 export function getRandomRealFieldDayStation(
   excludeCallsign = null,
   cwActiveOnly = false,
-  formats = null
+  formats = null,
+  usOnly = false
 ) {
   let pool = cwActiveOnly ? cwActiveStations : realStations;
   if (formats && formats.length > 0) {
     pool = pool.filter((station) => formats.includes(station.format));
+  }
+  if (usOnly) {
+    pool = pool.filter((station) => isUSCallsign(station.callsign));
   }
   if (pool.length === 0) {
     return null;
