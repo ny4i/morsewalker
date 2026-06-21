@@ -68,6 +68,10 @@ function getDOMInputs() {
     cwActiveFieldDayOnly: document.getElementById('cwActiveFieldDayOnly')
       ? document.getElementById('cwActiveFieldDayOnly').checked
       : false,
+    // Field Day: enter class and section in one combined field (TR4W style)
+    combinedFdExchange: document.getElementById('combinedFdExchange')
+      ? document.getElementById('combinedFdExchange').checked
+      : false,
     qrn: document.querySelector('input[name="qrn"]:checked').value,
     qsb: document.getElementById('qsb').checked,
     qsbPercentage: parseInt(document.getElementById('qsbPercentage').value, 10),

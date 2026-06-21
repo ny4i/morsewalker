@@ -158,6 +158,14 @@ document.addEventListener('DOMContentLoaded', () => {
       !useRealFieldDayCallsCheckbox.checked;
   });
 
+  // Toggling the combined class+section option re-lays out the Field Day entry
+  // fields immediately so the change is visible without switching modes.
+  const combinedFdExchangeCheckbox =
+    document.getElementById('combinedFdExchange');
+  combinedFdExchangeCheckbox.addEventListener('change', () => {
+    applyModeSettings(currentMode);
+  });
+
   function updateResponsiveButtons() {
     const responsiveButtons = document.querySelectorAll('.btn-responsive');
     responsiveButtons.forEach((button) => {
@@ -339,6 +347,20 @@ export function getCurrentMode() {
  *
  * @param {string} mode - The mode to apply settings for.
  */
+/**
+ * Whether Field Day class+section should be entered in one combined field
+ * (TR4W style) rather than two separate fields.
+ *
+ * Read straight from the checkbox rather than via getInputs() so it can be
+ * consulted during UI setup without triggering input validation side effects.
+ *
+ * @returns {boolean} True if the combined-entry option is enabled.
+ */
+function isCombinedFdExchange() {
+  const checkbox = document.getElementById('combinedFdExchange');
+  return checkbox ? checkbox.checked : false;
+}
+
 function applyModeSettings(mode) {
   const config = modeUIConfig[mode];
   const tuButton = document.getElementById('tuButton');
@@ -364,6 +386,15 @@ function applyModeSettings(mode) {
     infoField2.style.display = 'inline-block';
     infoField2.placeholder = config.infoField2Placeholder;
   } else {
+    infoField2.style.display = 'none';
+    infoField2.value = '';
+  }
+
+  // Field Day option: collapse the two-field class/section layout into a single
+  // combined entry field (TR4W style). Only Field Day is affected; tu() parses
+  // the combined field via modeLogicConfig.fd.parseCombinedInfo.
+  if (mode === 'fd' && isCombinedFdExchange()) {
+    infoField.placeholder = 'Class + Section';
     infoField2.style.display = 'none';
     infoField2.value = '';
   }
@@ -778,6 +809,18 @@ function tu() {
   const infoField2 = document.getElementById('infoField2');
   let infoValue1 = infoField.value.trim();
   let infoValue2 = infoField2.value.trim();
+
+  // When the Field Day combined-entry option is on, the class and section share
+  // a single field; parse it into the two values the comparison below expects.
+  // With the option off, the two separate fields are used as-is.
+  if (
+    typeof modeConfig.parseCombinedInfo === 'function' &&
+    isCombinedFdExchange()
+  ) {
+    const parsed = modeConfig.parseCombinedInfo(infoValue1);
+    infoValue1 = parsed.value1;
+    infoValue2 = parsed.value2;
+  }
 
   let currentStation = currentStations[activeStationIndex];
   totalContacts++;
