@@ -37,6 +37,9 @@ export const modeUIConfig = {
   fd: {
     showTuButton: true,
     showInfoField: true,
+    // Default (separate) layout. When the "Combined Class+Section entry" option
+    // is enabled, applyModeSettings() overrides this to a single field and
+    // tu() parses it via modeLogicConfig.fd.parseCombinedInfo.
     infoFieldPlaceholder: 'Class',
     showInfoField2: true,
     infoField2Placeholder: 'Section',
@@ -123,6 +126,20 @@ export const modeLogicConfig = {
     modeName: 'Field Day',
     extraInfoFieldKey: 'klass',
     extraInfoFieldKey2: 'section',
+    // Field Day's class and section arrive in one combined entry field. This
+    // splits that raw input into { value1: class, value2: section } so tu() can
+    // score each part with the existing extraInfoFieldKey/extraInfoFieldKey2
+    // comparison. Accepts either order, with or without a separating space
+    // (e.g. "3A NFL", "NFL 3A", "3ANFL"): class always starts with a digit and
+    // sections are alphabetic, so the digit-led token is unambiguously the
+    // class and the remainder is the section.
+    parseCombinedInfo: (raw) => {
+      const text = (raw || '').toUpperCase().replace(/\s+/g, '');
+      const match = text.match(/\d{1,2}[A-F]/);
+      const klass = match ? match[0] : '';
+      const section = match ? text.replace(match[0], '') : text;
+      return { value1: klass, value2: section };
+    },
   },
   contest: {
     cqMessage: (yourStation, theirStation, arbitrary) =>

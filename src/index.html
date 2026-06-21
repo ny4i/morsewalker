@@ -729,6 +729,43 @@
                 </div>
               </div>
 
+              <!-- Field Day Exchange Entry Row -->
+              <div class="row g-3 mt-3 align-items-end">
+                <!-- Combined Class+Section Entry (TR4W style) -->
+                <div class="col-12 col-md-4">
+                  <label class="form-label">&nbsp;</label>
+                  <input
+                    type="checkbox"
+                    class="btn-check"
+                    autocomplete="off"
+                    id="combinedFdExchange"
+                    onchange="
+                   document.getElementById('combinedFdExchangeLabel').innerHTML =
+                     `<i class='${this.checked ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle-xmark'} me-2'></i>Combined Entry`;
+                 "
+                  />
+                  <label
+                    class="btn btn-outline-primary w-100"
+                    for="combinedFdExchange"
+                    id="combinedFdExchangeLabel"
+                  >
+                    <i class="fa-regular fa-circle-xmark me-2"></i>Combined
+                    Entry
+                  </label>
+                </div>
+
+                <!-- Explanatory text -->
+                <div class="col-12 col-md-8">
+                  <p class="form-text mt-0 mb-0">
+                    In Field Day mode, enter class and section in a single field
+                    (TR4W style) instead of two separate fields. Either order is
+                    accepted, with or without a space (e.g.
+                    <code>3A NFL</code>, <code>NFL 3A</code>, or
+                    <code>3ANFL</code>).
+                  </p>
+                </div>
+              </div>
+
               <!-- Cut Numbers Row -->
               <div class="row g-3 mt-3 align-items-end">
                 <!-- Enable Cut Numbers -->
